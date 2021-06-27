@@ -1,0 +1,114 @@
+import pygame
+
+
+class Player:
+    x = 44
+    y = 44
+    speed = 1
+
+    def moveRight(self):
+        self.x = self.x + self.speed
+
+    def moveLeft(self):
+        self.x = self.x + self.speed
+
+    def moveUp(self):
+        self.y = self.y + self.speed
+
+    def moveDown(self):
+        self.y = self.y + self.speed
+
+
+class Maze:
+    def __int__(self):
+        self.M = 10
+        self.N = 8
+        self.maze = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                     1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+                     1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+                     1, 0, 1, 1, 1, 1, 1, 1, 0, 1,
+                     1, 0, 1, 0, 0, 0, 0, 0, 0, 1,
+                     1, 0, 1, 0, 1, 1, 1, 1, 0, 1,
+                     1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+                     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ]
+
+        def draw(display_surf, image_surf):
+            bx = 0
+            by = 0
+            for i in range(0, self.M * self.N):
+                if self.maze[bx + (by * self.M)] == 1:
+                    bx = bx + 1
+                if bx > self.M - 1:
+                    bx = 0
+                    by = by + 1
+
+
+def on_cleanup():
+    pygame.QUIT()
+
+
+class App:
+    windWidth = 800
+    windHeight = 600
+    player = 0
+
+    def __init__(self):
+        self._running = True
+        self._display_surf = None
+        self._image_surf = None
+        self.player = Player()
+
+    def __int__(self):
+        pygame.init()
+        self._display_surf = pygame.display.set_mode((self.windWidth, self.windHeight), pygame.HWSURFACE)
+
+        pygame.display.set_caption("Snake Maze")
+        self._running = True
+        self._image_surf = pygame.image.load("pygame.png")
+
+    def on_event(self, event):
+        if event.type == pygame.QUIT:
+            self._running = False
+
+    def on_loop(self):
+        pass
+
+    def on_render(self):
+        self._display_surf.fill((0, 0, 0,))
+        self._display_surf.blit(self._image_surf, (self.player.x, self.player.y))
+        pygame.display.flip()
+
+    def on_execute(self, k_right=None, k_left=None, k_up=None, k_down=None, k_escape=None):
+        if not self.on_init():
+            self._running = False
+
+        while self._running:
+            pygame.event.pump()
+            keys = pygame.key.get_pressed()
+
+            if keys[k_right]:
+                self.player.moveRight()
+
+            if keys[k_left]:
+                self.player.moveLeft()
+
+            if keys[k_up]:
+                self.player.moveUp()
+
+            if keys[k_down]:
+                self.player.moveDown()
+
+            if keys[k_escape]:
+                self._running = False
+
+            self.on_loop()
+            self.on_render()
+        on_cleanup()
+
+    def on_init(self):
+        pass
+
+
+if __name__ == "__main__":
+    theApp = App()
+    theApp.on_execute()
